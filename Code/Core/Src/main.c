@@ -56,8 +56,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void display7SEG(int num)
-{
+void display7SEG(int num) {
   uint32_t code[10] = {64, 121, 36, 48, 25, 18, 2, 120, 0, 16};
   GPIOB->ODR = code[num];
 }
@@ -92,8 +91,7 @@ void update7SEG(int index) {
     }
 }
 
-void updateClockBuffer(int hour, int minute)
-{
+void updateClockBuffer(int hour, int minute) {
   led_buffer[0] = hour / 10;
   led_buffer[1] = hour % 10;
   led_buffer[2] = minute / 10;
@@ -136,7 +134,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int hour = 15 , minute = 8 , second = 50;
+  int hour = 15 , minute = 8 , second = 57;
   while (1) {
   	  second ++;
       if (second >= 60) {
@@ -280,26 +278,20 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-int startSignal = 0;
+int counter1 = 25, counter2 = 100;
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	if (startSignal == 0) {
-		  update7SEG(index_led);
-		  setTimer1(25);
-		  setTimer2(100);
-		  startSignal = 1;
-	}
-    if (timer1_flag == 1) {
-        setTimer1(25);
-        index_led = (index_led + 1) % 4;
+	counter1--;
+	counter2--;
+    if (counter1 <= 0) {
+    	counter1 = 25;
         update7SEG(index_led);
+        index_led = (index_led + 1) % 4;
     }
 
-    if (timer2_flag == 1) {
-    	setTimer2(100);
+    if (counter2 <= 0) {
+    	counter2 = 100;
     	HAL_GPIO_TogglePin(GPIOA, DOT_Pin);
     }
-
-    timerRun();
 }
 /* USER CODE END 4 */
 
