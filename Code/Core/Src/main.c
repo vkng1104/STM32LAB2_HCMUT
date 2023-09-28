@@ -138,7 +138,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   update7SEG(index_led);
   setTimer1(1000);
-  setTimer2(250);
   int hour = 15, minute = 8, second = 57;
   while (1) {
         if (timer1_flag == 1) {
@@ -157,12 +156,6 @@ int main(void)
           updateClockBuffer(hour, minute);
           HAL_GPIO_TogglePin(GPIOA, DOT_Pin);
           setTimer1(1000);
-        }
-
-        if (timer2_flag == 1) {
-          index_led = (index_led + 1) % 4;
-          update7SEG(index_led);
-          setTimer2(250);
         }
         /* USER CODE END WHILE */
   }
