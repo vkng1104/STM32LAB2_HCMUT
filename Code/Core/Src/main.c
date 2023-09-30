@@ -160,7 +160,7 @@ int main(void)
         }
 
         if (timer2_flag == 1) {
-          index_led = (index_led + 1) % 4;
+          index_led = (index_led + 1) % MAX_LED;
           update7SEG(index_led);
           setTimer2(250);
         }
