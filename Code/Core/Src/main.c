@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
+#include "character_display.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +59,7 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 const int MAX_LED = 8;
 int index_led_matrix = 0;
-uint8_t matrix_buffer[8] = { 0x18, 0x24, 0x66, 0x7e, 0x66, 0x66, 0x66, 0x00 };
+uint8_t matrix_buffer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 void updateLEDMatrix(int index) {
 	// PA2, PA3, PA10, ..., PA15
 	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 1);
@@ -104,11 +105,22 @@ int main(void) {
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	setTimer1(1000);
+	int index_char = 0;
 	while (1) {
 		updateLEDMatrix(index_led_matrix);
 		index_led_matrix = (index_led_matrix + 1) % MAX_LED;
 		if (timer1_flag == 1) {
 			setTimer1(1000);
+			// update matrix_buffer
+			matrix_buffer[0] = characterHEX[index_char][0];
+			matrix_buffer[1] = characterHEX[index_char][1];
+			matrix_buffer[2] = characterHEX[index_char][2];
+			matrix_buffer[3] = characterHEX[index_char][3];
+			matrix_buffer[4] = characterHEX[index_char][4];
+			matrix_buffer[5] = characterHEX[index_char][5];
+			matrix_buffer[6] = characterHEX[index_char][6];
+			matrix_buffer[7] = characterHEX[index_char][7];
+			index_char = (index_char + 1) % MAX_CHAR;
 		}
 		/* USER CODE END WHILE */
 
