@@ -58,13 +58,14 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 const int MAX_LED = 8;
 int index_led_matrix = 0;
-uint8_t matrix_buffer[8] = {0x18, 0x3c, 0x66, 0x66, 0x7e, 0x66, 0x66, 0x66};
+uint8_t matrix_buffer[8] = { 0x18, 0x3c, 0x66, 0x66, 0x7e, 0x66, 0x66, 0x66 };
+void writePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
+	HAL_GPIO_WritePin(GPIOx, GPIO_Pin, 1);
+	HAL_GPIO_WritePin(GPIOx, ~GPIO_Pin, 0);
+}
 void updateLEDMatrix(int index) {
-	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 1); // PA1 - PA8
-	HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], 1);
-	HAL_Delay(1);
-	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 0);
-	HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], 0);
+	writePin(GPIOA, 0x01 << (index + 1)); // PA1 - PA8
+	writePin(GPIOB, matrix_buffer[index]);
 }
 /* USER CODE END 0 */
 
@@ -102,12 +103,12 @@ int main(void) {
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-	setTimer1(1000);
+	setTimer1(50);
 	while (1) {
-		updateLEDMatrix(index_led_matrix);
-		index_led_matrix = (index_led_matrix + 1) % MAX_LED;
 		if (timer1_flag == 1) {
-			setTimer1(1000);
+			setTimer1(50);
+			updateLEDMatrix(index_led_matrix);
+			index_led_matrix = (index_led_matrix + 1) % MAX_LED;
 		}
 		/* USER CODE END WHILE */
 
@@ -187,7 +188,6 @@ static void MX_TIM2_Init(void) {
 	/* USER CODE BEGIN TIM2_Init 2 */
 
 	/* USER CODE END TIM2_Init 2 */
-
 }
 
 /**
@@ -240,7 +240,6 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
 }
 
 /* USER CODE BEGIN 4 */
@@ -262,20 +261,20 @@ void Error_Handler(void) {
 	/* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
+ * @brief  Reports the name of the source file and the source line number
+ *         where the assert_param error has occurred.
+ * @param  file: pointer to the source file name
+ * @param  line: assert_param error line source number
+ * @retval None
+ */
 void assert_failed(uint8_t *file, uint32_t line)
 {
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+	/* USER CODE BEGIN 6 */
+	/* User can add his own implementation to report the file name and line number,
+	   ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+	/* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 
