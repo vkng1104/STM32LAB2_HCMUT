@@ -81,14 +81,13 @@ Disassembly of section .text:
 /* USER CODE BEGIN 0 */
 const int MAX_LED = 8;
 int index_led_matrix = 0;
-uint8_t matrix_buffer[8] = { 0x18, 0x24, 0x66, 0x7e, 0x66, 0x66, 0x66, 0x00 };
+uint8_t matrix_buffer[8] = {0x18, 0x3c, 0x66, 0x66, 0x7e, 0x66, 0x66, 0x66};
 void updateLEDMatrix(int index) {
  800014c:	b580      	push	{r7, lr}
  800014e:	b082      	sub	sp, #8
  8000150:	af00      	add	r7, sp, #0
  8000152:	6078      	str	r0, [r7, #4]
-	// PA2, PA3, PA10, ..., PA15
-	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 1);
+	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 1); // PA1 - PA8
  8000154:	687b      	ldr	r3, [r7, #4]
  8000156:	3301      	adds	r3, #1
  8000158:	2201      	movs	r2, #1

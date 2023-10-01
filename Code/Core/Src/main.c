@@ -58,10 +58,9 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 const int MAX_LED = 8;
 int index_led_matrix = 0;
-uint8_t matrix_buffer[8] = { 0x18, 0x24, 0x66, 0x7e, 0x66, 0x66, 0x66, 0x00 };
+uint8_t matrix_buffer[8] = {0x18, 0x3c, 0x66, 0x66, 0x7e, 0x66, 0x66, 0x66};
 void updateLEDMatrix(int index) {
-	// PA2, PA3, PA10, ..., PA15
-	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 1);
+	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 1); // PA1 - PA8
 	HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], 1);
 	HAL_Delay(1);
 	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 0);
