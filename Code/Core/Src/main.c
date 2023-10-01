@@ -60,13 +60,13 @@ static void MX_TIM2_Init(void);
 const int MAX_LED = 8;
 int index_led_matrix = 0;
 uint8_t matrix_buffer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+void writePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
+	HAL_GPIO_WritePin(GPIOx, GPIO_Pin, 1);
+	HAL_GPIO_WritePin(GPIOx, ~GPIO_Pin, 0);
+}
 void updateLEDMatrix(int index) {
-	// PA2, PA3, PA10, ..., PA15
-	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 1);
-	HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], 1);
-	HAL_Delay(1);
-	HAL_GPIO_WritePin(GPIOA, 0x01 << (index + 1), 0);
-	HAL_GPIO_WritePin(GPIOB, matrix_buffer[index], 0);
+	writePin(GPIOA, 0x01 << (index + 1)); // PA1 - PA8
+	writePin(GPIOB, matrix_buffer[index]);
 }
 /* USER CODE END 0 */
 
@@ -104,23 +104,25 @@ int main(void) {
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
-	setTimer1(1000);
+	setTimer1(50);
 	int index_char = 0;
 	while (1) {
-		updateLEDMatrix(index_led_matrix);
-		index_led_matrix = (index_led_matrix + 1) % MAX_LED;
 		if (timer1_flag == 1) {
-			setTimer1(1000);
+			setTimer1(50);
+			updateLEDMatrix(index_led_matrix);
+			index_led_matrix = (index_led_matrix + 1) % MAX_LED;
+			if (index_led_matrix == 0) {
 			// update matrix_buffer
-			matrix_buffer[0] = characterHEX[index_char][0];
-			matrix_buffer[1] = characterHEX[index_char][1];
-			matrix_buffer[2] = characterHEX[index_char][2];
-			matrix_buffer[3] = characterHEX[index_char][3];
-			matrix_buffer[4] = characterHEX[index_char][4];
-			matrix_buffer[5] = characterHEX[index_char][5];
-			matrix_buffer[6] = characterHEX[index_char][6];
-			matrix_buffer[7] = characterHEX[index_char][7];
-			index_char = (index_char + 1) % MAX_CHAR;
+				matrix_buffer[0] = characterHEX[index_char][0];
+				matrix_buffer[1] = characterHEX[index_char][1];
+				matrix_buffer[2] = characterHEX[index_char][2];
+				matrix_buffer[3] = characterHEX[index_char][3];
+				matrix_buffer[4] = characterHEX[index_char][4];
+				matrix_buffer[5] = characterHEX[index_char][5];
+				matrix_buffer[6] = characterHEX[index_char][6];
+				matrix_buffer[7] = characterHEX[index_char][7];
+				index_char = (index_char + 1) % MAX_CHAR;
+			}
 		}
 		/* USER CODE END WHILE */
 
@@ -258,6 +260,7 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+
 	timerRun();
 }
 /* USER CODE END 4 */
