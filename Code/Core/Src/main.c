@@ -59,7 +59,7 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 const int MAX_LED = 8;
 int index_led_matrix = 0;
-uint8_t matrix_buffer[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+uint8_t matrix_buffer[8] = {0x18, 0x3c, 0x66, 0x66, 0x7e, 0x66, 0x66, 0x66};
 void writePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
 	HAL_GPIO_WritePin(GPIOx, GPIO_Pin, 1);
 	HAL_GPIO_WritePin(GPIOx, ~GPIO_Pin, 0);
@@ -67,6 +67,12 @@ void writePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
 void updateLEDMatrix(int index) {
 	writePin(GPIOA, 0x01 << (index + 1)); // PA1 - PA8
 	writePin(GPIOB, matrix_buffer[index]);
+}
+uint8_t shiftbit(uint8_t a) {
+	uint8_t ret = a & 1;
+	a = a >> 1;
+	a = a | (ret << 7);
+	return a;
 }
 /* USER CODE END 0 */
 
@@ -113,14 +119,14 @@ int main(void) {
 			index_led_matrix = (index_led_matrix + 1) % MAX_LED;
 			if (index_led_matrix == 0) {
 			// update matrix_buffer
-				matrix_buffer[0] = characterHEX[index_char][0];
-				matrix_buffer[1] = characterHEX[index_char][1];
-				matrix_buffer[2] = characterHEX[index_char][2];
-				matrix_buffer[3] = characterHEX[index_char][3];
-				matrix_buffer[4] = characterHEX[index_char][4];
-				matrix_buffer[5] = characterHEX[index_char][5];
-				matrix_buffer[6] = characterHEX[index_char][6];
-				matrix_buffer[7] = characterHEX[index_char][7];
+				matrix_buffer[0] = shiftbit(matrix_buffer[0]);
+				matrix_buffer[1] = shiftbit(matrix_buffer[1]);
+				matrix_buffer[2] = shiftbit(matrix_buffer[2]);
+				matrix_buffer[3] = shiftbit(matrix_buffer[3]);
+				matrix_buffer[4] = shiftbit(matrix_buffer[4]);
+				matrix_buffer[5] = shiftbit(matrix_buffer[5]);
+				matrix_buffer[6] = shiftbit(matrix_buffer[6]);
+				matrix_buffer[7] = shiftbit(matrix_buffer[7]);
 				index_char = (index_char + 1) % MAX_CHAR;
 			}
 		}
